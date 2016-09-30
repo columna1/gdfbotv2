@@ -1,0 +1,452 @@
+commands = {}
+dependencies = {
+   copas = {
+      ["2.0.1-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }, {
+                  op = "<",
+                  version = {
+                     5, 4, string = "5.4"
+                  }
+               }
+            },
+            name = "lua"
+         }, {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     2, 1, string = "2.1"
+                  }
+               }
+            },
+            name = "luasocket"
+         }, {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     1, 14, string = "1.14"
+                  }
+               }
+            },
+            name = "coxpcall"
+         }
+      }
+   },
+   coxpcall = {
+      ["1.16.0-1"] = {}
+   },
+   dkjson = {
+      ["2.5-2"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }, {
+                  op = "<",
+                  version = {
+                     5, 4, string = "5.4"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   lpeg = {
+      ["1.0.0-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   lsqlite3 = {
+      ["0.9.3-0"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }, {
+                  op = "<",
+                  version = {
+                     5, 4, string = "5.4"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   luafilesystem = {
+      ["1.6.3-2"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   luajson = {
+      ["1.3.3-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }, {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     0, 8, 1, string = "0.8.1"
+                  }
+               }
+            },
+            name = "lpeg"
+         }
+      }
+   },
+   luasec = {
+      ["0.6-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }, {
+            constraints = {},
+            name = "luasocket"
+         }
+      }
+   },
+   luasocket = {
+      ["3.0rc1-2"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   }
+}
+modules = {
+   copas = {
+      "copas/2.0.1-1"
+   },
+   ["copas.ftp"] = {
+      "copas/2.0.1-1"
+   },
+   ["copas.http"] = {
+      "copas/2.0.1-1"
+   },
+   ["copas.limit"] = {
+      "copas/2.0.1-1"
+   },
+   ["copas.smtp"] = {
+      "copas/2.0.1-1"
+   },
+   coxpcall = {
+      "coxpcall/1.16.0-1"
+   },
+   dkjson = {
+      "dkjson/2.5-2"
+   },
+   json = {
+      "luajson/1.3.3-1"
+   },
+   ["json.decode"] = {
+      "luajson/1.3.3-1"
+   },
+   ["json.decode.composite"] = {
+      "luajson/1.3.3-1"
+   },
+   ["json.decode.number"] = {
+      "luajson/1.3.3-1"
+   },
+   ["json.decode.others"] = {
+      "luajson/1.3.3-1"
+   },
+   ["json.decode.state"] = {
+      "luajson/1.3.3-1"
+   },
+   ["json.decode.strings"] = {
+      "luajson/1.3.3-1"
+   },
+   ["json.decode.util"] = {
+      "luajson/1.3.3-1"
+   },
+   ["json.encode"] = {
+      "luajson/1.3.3-1"
+   },
+   ["json.encode.array"] = {
+      "luajson/1.3.3-1"
+   },
+   ["json.encode.calls"] = {
+      "luajson/1.3.3-1"
+   },
+   ["json.encode.number"] = {
+      "luajson/1.3.3-1"
+   },
+   ["json.encode.object"] = {
+      "luajson/1.3.3-1"
+   },
+   ["json.encode.others"] = {
+      "luajson/1.3.3-1"
+   },
+   ["json.encode.output"] = {
+      "luajson/1.3.3-1"
+   },
+   ["json.encode.output_utility"] = {
+      "luajson/1.3.3-1"
+   },
+   ["json.encode.strings"] = {
+      "luajson/1.3.3-1"
+   },
+   ["json.util"] = {
+      "luajson/1.3.3-1"
+   },
+   lfs = {
+      "luafilesystem/1.6.3-2"
+   },
+   lpeg = {
+      "lpeg/1.0.0-1"
+   },
+   lsqlite3 = {
+      "lsqlite3/0.9.3-0"
+   },
+   ltn12 = {
+      "luasocket/3.0rc1-2"
+   },
+   mime = {
+      "luasocket/3.0rc1-2"
+   },
+   ["mime.core"] = {
+      "luasocket/3.0rc1-2"
+   },
+   re = {
+      "lpeg/1.0.0-1"
+   },
+   socket = {
+      "luasocket/3.0rc1-2"
+   },
+   ["socket.core"] = {
+      "luasocket/3.0rc1-2"
+   },
+   ["socket.ftp"] = {
+      "luasocket/3.0rc1-2"
+   },
+   ["socket.headers"] = {
+      "luasocket/3.0rc1-2"
+   },
+   ["socket.http"] = {
+      "luasocket/3.0rc1-2"
+   },
+   ["socket.smtp"] = {
+      "luasocket/3.0rc1-2"
+   },
+   ["socket.tp"] = {
+      "luasocket/3.0rc1-2"
+   },
+   ["socket.url"] = {
+      "luasocket/3.0rc1-2"
+   },
+   ssl = {
+      "luasec/0.6-1"
+   },
+   ["ssl.https"] = {
+      "luasec/0.6-1"
+   }
+}
+repository = {
+   copas = {
+      ["2.0.1-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {
+               coxpcall = "1.16.0-1",
+               luasocket = "3.0rc1-2"
+            },
+            modules = {
+               copas = "copas.lua",
+               ["copas.ftp"] = "copas/ftp.lua",
+               ["copas.http"] = "copas/http.lua",
+               ["copas.limit"] = "copas/limit.lua",
+               ["copas.smtp"] = "copas/smtp.lua"
+            }
+         }
+      }
+   },
+   coxpcall = {
+      ["1.16.0-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               coxpcall = "coxpcall.lua"
+            }
+         }
+      }
+   },
+   dkjson = {
+      ["2.5-2"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               dkjson = "dkjson.lua"
+            }
+         }
+      }
+   },
+   lpeg = {
+      ["1.0.0-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               lpeg = "lpeg.dll",
+               re = "re.lua"
+            }
+         }
+      }
+   },
+   lsqlite3 = {
+      ["0.9.3-0"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               lsqlite3 = "lsqlite3.dll"
+            }
+         }
+      }
+   },
+   luafilesystem = {
+      ["1.6.3-2"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               lfs = "lfs.dll"
+            }
+         }
+      }
+   },
+   luajson = {
+      ["1.3.3-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {
+               lpeg = "1.0.0-1"
+            },
+            modules = {
+               json = "json.lua",
+               ["json.decode"] = "json/decode.lua",
+               ["json.decode.composite"] = "json/decode/composite.lua",
+               ["json.decode.number"] = "json/decode/number.lua",
+               ["json.decode.others"] = "json/decode/others.lua",
+               ["json.decode.state"] = "json/decode/state.lua",
+               ["json.decode.strings"] = "json/decode/strings.lua",
+               ["json.decode.util"] = "json/decode/util.lua",
+               ["json.encode"] = "json/encode.lua",
+               ["json.encode.array"] = "json/encode/array.lua",
+               ["json.encode.calls"] = "json/encode/calls.lua",
+               ["json.encode.number"] = "json/encode/number.lua",
+               ["json.encode.object"] = "json/encode/object.lua",
+               ["json.encode.others"] = "json/encode/others.lua",
+               ["json.encode.output"] = "json/encode/output.lua",
+               ["json.encode.output_utility"] = "json/encode/output_utility.lua",
+               ["json.encode.strings"] = "json/encode/strings.lua",
+               ["json.util"] = "json/util.lua"
+            }
+         }
+      }
+   },
+   luasec = {
+      ["0.6-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {
+               luasocket = "3.0rc1-2"
+            },
+            modules = {
+               ssl = "ssl.lua",
+               ["ssl.https"] = "ssl/https.lua"
+            }
+         }
+      }
+   },
+   luasocket = {
+      ["3.0rc1-2"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               ltn12 = "ltn12.lua",
+               mime = "mime.lua",
+               ["mime.core"] = "mime/core.dll",
+               socket = "socket.lua",
+               ["socket.core"] = "socket/core.dll",
+               ["socket.ftp"] = "socket/ftp.lua",
+               ["socket.headers"] = "socket/headers.lua",
+               ["socket.http"] = "socket/http.lua",
+               ["socket.smtp"] = "socket/smtp.lua",
+               ["socket.tp"] = "socket/tp.lua",
+               ["socket.url"] = "socket/url.lua"
+            }
+         }
+      }
+   }
+}

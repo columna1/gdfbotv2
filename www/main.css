@@ -1,0 +1,134 @@
+.nav {
+	height: 48px;
+	width: calc(100vw - 32px);
+	background-color: #444444;
+	display: block;
+	position: fixed;
+	z-index: 100;
+	top: 0;
+	padding: 0 16px;
+	color: #FFFFFF;
+}
+
+.menu-button, .nav-menu, .nav-menu a {
+	transition: background-color 0.3s;
+}
+
+.menu-button > span {
+	transition: transform 0.2s;
+}
+
+.nav-menu {
+	transition: opacity 0.3s, visibility 0.3s
+}
+
+.title {
+	transition: color 0.3s;
+}
+
+.divider {
+	height: 1px;
+	width: 100%;
+	margin: 8px 0;
+	background-color: #BBBBBB;
+}
+
+.menu-button {
+	float: right;
+	height: 100%;
+}
+
+.menu-container:hover > .nav-menu {
+	display: block;
+	opacity: 1;
+	visibility: visible;
+}
+
+.menu-container:hover > .menu-button > .caret {
+	transform: scale(1, -1);
+}
+
+.menu-button {
+	text-decoration: none;
+	color: inherit;
+	font-size: 14px;
+	padding: 0 8px;
+	line-height: 48px;
+	display: block;
+}
+
+.nav-menu {
+	background-color: #F5F5F5;
+	min-width: 128px;
+	min-height: 92px;
+	position: absolute;
+	top: 100%;
+	right: 16px;
+	border-radius: 4px;
+	border: 1px solid #BBBBBB;
+	color: #000000;
+	padding: 4px 0;
+	box-shadow: 0 0 5px #444444;
+	opacity: 0;
+	visibility: hidden;
+
+	font-size: 15px;
+	list-style: none;
+	display: block;
+	margin: 0;
+}
+
+.nav-menu a {
+	text-decoration: none;
+	color: inherit;
+	width: calc(100% - 24px);
+	line-height: 100%;
+	padding: 6px 12px;
+	display: block;
+}
+
+.nav-menu a:hover {
+	background-color: #E5E5E5;
+}
+
+.menu-button:hover {
+	background-color: #555555;
+}
+
+.menu-button > span {
+	line-height: 48px;
+}
+
+.title-container {
+	display: block;
+	height: 100%;
+	text-decoration: none;
+	color: inherit;
+	float: left;
+	padding-right: 8px;
+}
+
+.title-container > .title {
+	margin: 0;
+	display: block;
+	line-height: 48px;
+	height: 100%;
+	text-shadow: 4px 4px 6px #000000;
+}
+
+.title-container:hover {
+	color: #CCCCCC;
+}
+
+body {
+	margin: 48px 0 0 0;
+	background-color: #CCCCCC;
+	background: linear-gradient(0deg, #FFFFFF, #CCCCCC);
+	height: calc(100vh - 48px);
+    display: inline-block;
+    width: 100vw;
+}
+
+html {
+	font-family: Helvetica, Arial;
+}

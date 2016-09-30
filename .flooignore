@@ -1,0 +1,9 @@
+*.o
+*.pyc
+*~
+*.sqlite3
+db.sqlite3
+extern/
+node_modules/
+tmp
+vendor/

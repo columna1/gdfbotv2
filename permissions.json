@@ -1,0 +1,20 @@
+{
+  ".global":{
+    "admin":{
+      "web": [],
+      "commands":{
+        "close":true
+      },
+      "inherit":{
+      }
+    }
+  },
+  "#columnaTesting":{
+    ".all":{
+      "web": [],
+      "commands":{
+      },
+      "inherit":[]
+    },
+  }
+}
