@@ -1,14 +1,15 @@
---[[ todo list
-
+--[[
+todo list
+   
 admins/bot amdins = pepole the channel owner gives admin access to
 global bot admin? somewhat limited permissions can but can edit all channels important for moderation/maitenance
 chanel owner = has somewhat elevated permissions and can edit their channel
 super admin = us/owners that can edit absolutely anything and everthing
 	possible second verification step in case twitch account is comprimised (we do not want ANYONE to get into this account/access level
-        Absolutely manual adding of super amdmins, cannot add through gui or any similar process)
-
+        Absolutely manual adding of super amdmins, cannot add through gui or any similar process)'
+   
 create a web gui
-
+   
 	first page after login shows available channels to look at/view
 		only shows channels the user is authorised to access
 
@@ -25,8 +26,8 @@ create a web gui
 		easy command adding
 			whisper support for easy commands
 	configurable whitelist/blacklist for individual commands?
-	info console for admin info (ex. "Command [command here] has been registered"
-	function inforrmation panel?
+	info console for admin info (ex. "Command [command here] has been registered")
+	functions information panel?
 	admin editing
 	userlist
 	mute button/indicator
@@ -50,6 +51,7 @@ create a web gui
 	request commands button???
 	support devs button (paypal) -maybe
 
+
 colors DONE
 
 twitch intergration
@@ -57,6 +59,7 @@ twitch intergration
 	editing things like title etc
 	registering new users? -does a superadmin/owner need to add new users?
 	statistics with bootstrap
+
 
 channel specific commands
 	three/four types of commands
@@ -67,6 +70,7 @@ channel specific commands
 	disabling commands
 	option for commands to be admin only DONE
 	option for commands to be mod only DONE
+
 
 global commands? DONE
 
@@ -85,6 +89,7 @@ Servers
 	bot can be in multiple servers.
 		settings can be much like seperate channels?
 
+
 functions for commands
 	http grabbing functions DONE
 	https grabbing functions DONE
@@ -101,7 +106,7 @@ functions for commands
 	sending messages
 		can send to different servers/channels (only superAdmins can register commands with these)
 		can whisper to people
-		limit on number of messages/freequency of messages (prevents global timeouts
+		limit on number of messages/freequency of messages (prevents global timeouts)
 	permission system? DONE
 		admin permission - access to extra functions and other things
 		channel permission - access only to general functions
@@ -167,8 +172,7 @@ Backend
 	~ = owner
 	% = sub
 	^ = bot
-]]--
-
+]]
 local function isWindows()
   return type(package) == 'table' and type(package.config) == 'string' and package.config:sub(1,1) == '\\'
 end
@@ -194,21 +198,24 @@ for i,v in ipairs(tArgs) do
 	end
 end
 
---lets test for user list
+
 require("irc")
+do
+	local succ, err = loadfile("config.lua")
+	if not succ then
+		print("Could not load config: " .. err)
+		return
+	else
+		succ()
+	end
+end
+
 local copas = require("copas")
 local sleep = require "socket".sleep
-IrcNick = "GdfBot"
-OsuNick = "columna1"
---IrcNick = "gdfbot"
---ladle.init(80)
 if ircEnabled then
 	s = irc.new{nick = IrcNick}
-  osuirc = irc.new{nick = OsuNick, username = OsuNick}
+	osuirc = irc.new{nick = OsuNick, username = OsuNick}
 end
-IrcServer = "irc.chat.twitch.tv"
-OsuIrcServer = "irc.ppy.sh"
-OsuPassword = "1c6a2c47"
 
 local file = io.open("oauth.txt", "r")
 if not file then

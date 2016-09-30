@@ -1,0 +1,5 @@
+IrcNick = "GdfBot"
+OsuNick = "columna1"
+IrcServer = "irc.chat.twitch.tv"
+OsuIrcServer = "irc.ppy.sh"
+OsuPassword = "1c6a2c47"

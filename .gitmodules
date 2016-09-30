@@ -1,0 +1,6 @@
+[submodule "www"]
+	path = www
+	url = https://github.com/gdfbot-team/gdfbotv2-website.git
+[submodule "luajit"]
+	path = luajit
+	url = https://github.com/gdfbot-team/gdfbotv2-luajit.git
