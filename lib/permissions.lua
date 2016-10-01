@@ -10,6 +10,8 @@ permdb:exec([[
 	CREATE TABLE IF NOT EXISTS group_inherits('group' TEXT, channel TEXT, inherit TEXT);
 ]])
 
+local sqlAssert = sqlAssert
+
 module("permissions")
 
 function removeGroup(group, channel)
