@@ -7,7 +7,9 @@ local json = require("dkjson")
 
 local events = {}
 
-function addEvent(channel, event, func)
+event = {}
+
+function event.add(channel, event, func)
 	if not events[channel] then
 		events[channel] = {}
 	end
@@ -18,7 +20,7 @@ function addEvent(channel, event, func)
 	end
 end
 
-function callEvent(channel, event, ...)
+function event.call(channel, event, ...)
 	if events[channel] and events[channel][event] then
 		for _, func in ipairs(events[channel][event]) do
 			local succ, err = coxpcall.pcall(func, ...)
@@ -29,7 +31,7 @@ function callEvent(channel, event, ...)
 	end
 end
 
-addEvent("#altenius", "chat", function(user, message)
+event.add("#altenius", "chat", function(user, message)
 	local status = {[-2]="[graveyard]",[-1]="[WIP]",[0]="[pending]",[1]="[ranked]",[2]="[approved]",[3]="[qualified]"}
 	message = message:lower()
 	local sstart, send = message:find("https?://osu.ppy.sh/[sb]/")
@@ -48,7 +50,7 @@ addEvent("#altenius", "chat", function(user, message)
 	end
 end)
 
-function chats(user, channel, message)
+local function chats(user, channel, message)
 	log("[%{yellow}" .. channel .. "%{reset}] %{cyan}" .. user.nick .. "%{reset}: " .. message)
 	if message:sub(1, 1) == "!" then
 		local pos = message:find(" ")
@@ -58,7 +60,7 @@ function chats(user, channel, message)
 		end
 	end
 
-	callEvent(channel, "chat", user, message)
+	event.call(channel, "chat", user, message)
 end
 s:hook("OnChat",chats)
 
@@ -78,5 +80,3 @@ function lists(tab,msg)
 	end]]
 end
 s:hook("NameList",lists)
-
--- loadModule("commands")

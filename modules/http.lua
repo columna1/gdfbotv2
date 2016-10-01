@@ -9,85 +9,16 @@ local sql = require("lsqlite3")
 local copas = require("copas")
 copas.http = require("copas.http")
 local coxpcall = require("coxpcall")
+local http = require("lib/http")
+local statistics = require("lib/statistics")
+local permissions = require("lib/permissions")
 
 local httpsocket = socket.bind("*", 8080)
 local httpssocket = socket.bind("*", 10443)
 
+session = require("modules/http/sessions")
+
 local clients = {}
-
-function httpsGet(url, body, headers)
-	headers = headers or {}
-	if body then
-		headers["Content-Length"] = #body
-	end
-	local t = {}
-	local success, code, hdrs, status = copas.http.request({
-		url = url;
-		headers = headers;
-		sink = ltn12.sink.table(t);
-		source = body and ltn12.source.string(body);
-	})
-	if success == nil then
-		return success, code
-	end
-	return table.concat(t), code, hdrs, status
-end
-
-function httpsPost(url, body, headers)
-	headers = headers or {}
-	if body then
-		headers["Content-Length"] = #body
-	end
-	local t = {}
-	local success, code, hdrs, status = copas.http.request({
-		url = url;
-		headers = headers;
-		sink = ltn12.sink.table(t);
-		source = body and ltn12.source.string(body);
-		method = "POST";
-	})
-	if success == nil then
-		return success, code
-	end
-	return table.concat(t), code, hdrs, status
-end
-
-function httpGet(url, body, headers)
-	headers = headers or {}
-	if body then
-		headers["Content-Length"] = #body
-	end
-	local t = {}
-	local success, code, hdrs, status = copas.http.request({
-		url = url;
-		headers = headers;
-		sink = ltn12.sink.table(t);
-		source = body and ltn12.source.string(body);
-	})
-	if success == nil then
-		return success, code
-	end
-	return table.concat(t), code, hdrs, status
-end
-
-function httpPost(url, body, headers)
-	headers = headers or {}
-	if body then
-		headers["Content-Length"] = #body
-	end
-	local t = {}
-	local success, code, hdrs, status = copas.http.request({
-		url = url;
-		headers = headers;
-		sink = ltn12.sink.table(t);
-		source = body and ltn12.source.string(body);
-		method = "POST";
-	})
-	if success == nil then
-		return success, code
-	end
-	return table.concat(t), code, hdrs, status
-end
 
 local function sanitizePath(path)
 	local parts = {}
@@ -338,7 +269,8 @@ local function handleLuaFile(client, data, filename, args)
 			check = session.check;
 		};
 
-		permission = { -- channel defaults to .global
+		permissions = { -- channel defaults to .global
+			--[[
 			getUserWebChannels = getUserWebChannels; -- (user)
 
 			groupHasPermission = groupHasPermission; -- (group, permission [, channel])
@@ -358,9 +290,27 @@ local function handleLuaFile(client, data, filename, args)
 			addUserGroup = addUserGroup; -- (user, group [, channel])
 			removeUserGroup = removeUserGroup; -- (user, group [, channel])
 
-			addGroup = addGroup; -- (group [, channel [, commands [, web permissions [, inherits]]]])
+			addGroup = addGroup; -- (group [, channel [, commands [, web permissions [, inherits] ] ] ])
 			removeGroup = removeGroup; -- (group [, channel])
 			removeUser = removeUser; -- (user [, channel])
+			]]
+			
+			removeGroup = permissions.removeGroup;
+			getUserWebChannels = permissions.getUserWebChannels;
+			removeUserGroup = permissions.removeUserGroup;
+			userIsAdmin = permissions.userIsAdmin;
+			userHasPermission = permissions.userHasPermission;
+			removeUserPermission = permissions.removeUserPermission;
+			removeGroupInherit = permissions.removeGroupInherit;
+			groupDoesInherit = permissions.groupDoesInherit;
+			addGroupInherit = permissions.addGroupInherit;
+			addUserPermission = permissions.addUserPermission;
+			userIsMod = permissions.userIsMod;
+			addUserGroup = permissions.addUserGroup;
+			removeUser = permissions.removeUser;
+			groupHasPermission = permissions.groupHasPermission;
+			userIsInGroup = permissions.userIsInGroup;
+			addGroupPermission = permissions.addGroupPermission;
 		};
 
 		sql = {
@@ -375,14 +325,14 @@ local function handleLuaFile(client, data, filename, args)
 		};
 
 		https = {
-			get = httpsGet;
-			post = httpsPost;
+			get = http.get;
+			post = http.post;
 			request = copas.http.request;
 		};
 
 		http = {
-			get = httpGet;
-			post = httpPost;
+			get = http.get;
+			post = http.post;
 			request = copas.http.request;
 		};
 
@@ -392,7 +342,7 @@ local function handleLuaFile(client, data, filename, args)
 		};
 
 		statistics = {
-			getLast = getLastStatistics;
+			getLast = statistics.getLast;
 		};
 	}
 	luaenv._G = luaenv
@@ -632,8 +582,6 @@ local function onConnection(conn, sec)
 		log("%{red}error in client handler: " .. tostring(err))
 	end
 end
-
-loadModule("http/sessions")
 
 local address, port = httpsocket:getsockname()
 log("Hosting http server on %{cyan}" .. address .. "%{reset}:%{cyan}" .. port)

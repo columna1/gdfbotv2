@@ -2,7 +2,9 @@ local function escapeString(string)
 	return string:gsub("\\", "\\\\"):gsub("\n", "\\\n"):gsub("\"", "\\\"")
 end
 
-function serialize(val, spaces)
+local util = {}
+
+function util.serialize(val, spaces)
 	spaces = spaces or 0
 
 	if type(val) == "table" then
@@ -26,14 +28,14 @@ function serialize(val, spaces)
 	end
 end
 
-function unserialize(string)
+function util.unserialize(string)
 	local f = loadstring("return " .. string)
 	if f then
 		return f()
 	end
 end
 
-function splitArgs(args)
+function util.splitArgs(args)
 	local tbl = {}
 	for part in args:gmatch("[^ ]+") do
 		table.insert(tbl, part)
@@ -41,3 +43,5 @@ function splitArgs(args)
 
 	return tbl
 end
+
+return util

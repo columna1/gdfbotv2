@@ -45,7 +45,9 @@ local function pullStatistics()
   end
 end
 
-function getLastStatistics()
+local stats = {}
+
+function stats.getLast()
   return lastStats
 end
 
@@ -55,3 +57,5 @@ copas.addthread(function()
     copas.sleep(120)
   end
 end)
+
+return stats

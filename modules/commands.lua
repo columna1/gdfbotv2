@@ -4,6 +4,7 @@ commands.global = {}
 local json = require("dkjson")
 local url = require("socket.url")
 local copas = require("copas")
+local util = require("lib/util")
 
 local commandTimeout = 1 -- commands can run for a maximum of 1 second
 local maxReply = 200
@@ -206,7 +207,7 @@ function loadCommands()
 			local count = 0
 			local file = io.open("commands/" .. name, "r")
 			if file then
-				local tbl = unserialize(file:read("*a"))
+				local tbl = util.unserialize(file:read("*a"))
 				file:close()
 
 				if tbl then
@@ -229,4 +230,4 @@ end
 
 loadCommands()
 
-loadModule("commands/global")
+require("modules/commands/global")
