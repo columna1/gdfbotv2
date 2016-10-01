@@ -1,4 +1,4 @@
-session = {}
+local session = {}
 
 local sessionTimeout = 3600 * 3 -- 3 hours
 
@@ -72,3 +72,5 @@ function session.check(sessionid) -- returns userid
     prep:finalize()
     return row.username
 end
+
+return session

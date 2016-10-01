@@ -185,54 +185,57 @@ else
 	-- package.cpath = "./?.dll;./luajit/?.dll"
 end
 
+local config = require("lib/config")
+
 startTime = os.time()
 
-local colors = require("ansicolors")
+local colors = require("lib/ansicolors")
 
 ircEnabled = true
+
+local cfgfile = "bot.cfg"
 
 local tArgs = {...}
 for i,v in ipairs(tArgs) do
 	if v == "-noirc" then
 		ircEnabled = false
+	elseif v == "-dev" then
+		cfgfile = "dev.cfg"
 	end
 end
 
+require("lib/irc")
+local maincfg = { ["IrcNick"] = "GdfBot";
+	["OsuNick"] = "osuusername";
+	["IrcServer"] = "irc.chat.twitch.tv";
+	["OsuIrcServer"] = "irc.ppy.sh";
+	["OsuPassword"] = "osupassword";
+	["Oauth"] = "oauth";
+}
 
-require("irc")
 do
-	local succ, err = loadfile("config.lua")
-	if not succ then
-		print("Could not load config: " .. err)
-		return
+	local cfg = config.read(cfgfile)
+	if not cfg then
+		print("Could not open config file " .. cfgfile .. ", creating sample config")
+		
+		config.write(cfgfile, maincfg)
 	else
-		succ()
+		for i,v in pairs(cfg) do -- just in case the config is missing some items
+			maincfg[i] = v
+		end
 	end
 end
 
 local copas = require("copas")
 local sleep = require "socket".sleep
 if ircEnabled then
-	s = irc.new{nick = IrcNick}
-	osuirc = irc.new{nick = OsuNick, username = OsuNick}
+	s = irc.new{nick = maincfg.IrcNick}
+	osuirc = irc.new{nick = maincfg.OsuNick, username = maincfg.OsuNick}
 end
 
-local file = io.open("oauth.txt", "r")
-if not file then
-  print("oauth.txt does not exist")
-  Oauth = ""
-else
-  Oauth = file:read("*a")
-  file:close()
-end
-
-Password = "oauth:" .. Oauth
-
---IrcChannel = "#greendeathflavor"
---IrcChannel = "#brenbread"
---IrcChannel = "#computercraft"
-channelsFile = "channels.txt"
-channels = {}
+local Password = "oauth:" .. maincfg.Oauth
+local channelsFile = "channels.txt"
+local channels = {}
 globalvars = {}
 
 function loadChannels()
@@ -294,69 +297,77 @@ function loadModule(name)
 	func()
 end
 
-loadModule("util")
-loadModule("permissions")
-loadModule("http")
-loadModule("handlers")
-loadModule("commands")
-
 local sql = require("lsqlite3")
-database = sql.open("db.sqlite3")
-
+database = sql.open("databases/db.sqlite3")
 function sqlAssert(...)
-  local v = {...}
-  if v[1] then
-    return unpack(v)
-  else
-    error(database:errmsg(), 2)
-  end
+	local v = {...}
+	if v[1] then
+		return unpack(v)
+	else
+		error(database:errmsg(), 2)
+	end
 end;
 
+loadModule("http")
+loadModule("event")
+loadModule("commands")
+
 if ircEnabled then
-  loadChannels()
-  copas.addthread(function()
-    s:connect({
-      host = IrcServer;
-      port = 6667;
-      password = Password;
-      secure = false;
-    })
-
-  	s.track_users = true
-    log("connected to irc")
-
-    for _, channel in ipairs(channels) do
-      s:join(channel)
-      log("joining " .. channel)
-    end
-
-    while running do
-      s:think()
-    end
-  end)
-
-  copas.addthread(function()
-    osuirc:connect({
-      host = OsuIrcServer;
-      port = 6667;
-      password = OsuPassword;
-      secure = false;
-    })
-
-    log("connected to osu irc")
-
-    while running do
-      osuirc:think()
-    end
-  end)
+	loadChannels()
+	
+	local function ircThread()
+		s:connect({
+			host = maincfg.IrcServer;
+			port = 6667;
+			password = Password;
+			secure = false;
+		})
+		
+		s.track_users = true
+		log("connected to irc")
+		
+		for _, channel in ipairs(channels) do
+			s:join(channel)
+			log("joining " .. channel)
+		end
+		
+		while running do
+			local succ, err = pcall(s.think, s)
+			if not succ then
+				print("IRC error: " .. err)
+				return
+			end
+				
+		end
+	end
+	
+	copas.addthread(ircThread)
+	
+	local function osuThread()
+		osuirc:connect({
+			host = maincfg.OsuIrcServer;
+			port = 6667;
+			password = maincfg.OsuPassword;
+			secure = false;
+		})
+		
+		log("connected to osu irc")
+		
+		while running do
+			local succ, err = pcall(osuirc.think, osuirc)
+			if not succ then
+				print("Osu IRC error: " .. err)
+				return
+			end
+		end
+	end
+	
+	copas.addthread(osuThread)
 end
 
 function printTable(tbL)
 	print(serialize(tbl))
 end
-
-loadModule("twitchapi")
-loadModule("statistics")
 
 running = true
 

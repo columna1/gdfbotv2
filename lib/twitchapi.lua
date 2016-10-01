@@ -2,7 +2,9 @@ local json = require("dkjson")
 
 local baseUrl = "https://api.twitch.tv/kraken/"
 
-function twitchGet(api, args)
+local twitchapi  {}
+
+function twitchapi.get(api, args)
   local url = baseUrl .. api
   if args then
     url = url .. "?" .. args
@@ -16,3 +18,6 @@ function twitchGet(api, args)
 
   log("could not retrieve twitch api " .. api)
 end
+
+
+return twitchapi
