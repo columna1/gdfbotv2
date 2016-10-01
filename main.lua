@@ -186,10 +186,10 @@ else
 end
 
 local config = require("lib/config")
-
-startTime = os.time()
-
+local copas = require("copas")
+local sleep = require "socket".sleep
 local colors = require("lib/ansicolors")
+startTime = os.time()
 
 ircEnabled = true
 
@@ -204,8 +204,7 @@ for i,v in ipairs(tArgs) do
 	end
 end
 
-require("lib/irc")
-local maincfg = { ["IrcNick"] = "GdfBot";
+_G.maincfg = { ["IrcNick"] = "GdfBot";
 	["OsuNick"] = "osuusername";
 	["IrcServer"] = "irc.chat.twitch.tv";
 	["OsuIrcServer"] = "irc.ppy.sh";
@@ -226,57 +225,28 @@ do
 	end
 end
 
-local copas = require("copas")
-local sleep = require "socket".sleep
-if ircEnabled then
-	s = irc.new{nick = maincfg.IrcNick}
-	osuirc = irc.new{nick = maincfg.OsuNick, username = maincfg.OsuNick}
+local sql = require("lsqlite3")
+database = sql.open("databases/db.sqlite3")
+function sqlAssert(...)
+	local v = {...}
+	if v[1] then
+		return unpack(v)
+	else
+		error(database:errmsg(), 2)
+	end
 end
 
-local Password = "oauth:" .. maincfg.Oauth
-local channelsFile = "channels.txt"
-local channels = {}
+do
+	--local prep = sqlAssert(database:prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='accounts'"))
+	--if prep:step() ~= sql.row then
+	database:exec([[
+		CREATE TABLE IF NOT EXISTS accounts(userid INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, email TEXT NOT NULL, active BOOLEAN DEFAULT 1, oauth TEXT);
+		CREATE TABLE IF NOT EXISTS psession(sessionid CHAR(32) PRIMARY KEY, username TEXT UNIQUE NOT NULL);
+		CREATE TABLE IF NOT EXISTS session(sessionid CHAR(32) PRIMARY KEY, username TEXT UNIQUE NOT NULL, lastaccess BIGINT NOT NULL);
+		]])
+end
+
 globalvars = {}
-
-function loadChannels()
-	file = io.open(channelsFile,"r")
-	if file then
-		for line in file:lines() do
-			line = line:gsub("\r", "")
-			table.insert(channels,line)
-			globalvars[line] = {}
-		end
-		file:close()
-	end
-end
-
-function saveChannels()
-	file = io.open(channelsFile,"w")
-	if file then
-		for i = 1,#channels do
-			file:write(channels[i].."\n")
-		end
-		file:close()
-	end
-end
-
-local timers = {}
-
-function registerTimer(func, interval, repeating)
-	local id = #timers + 1
-	timers[id] = {
-		func = func;
-		next = os.clock() + interval;
-		interval = interval;
-		repeating = repeating;
-	}
-
-	return id
-end
-
-function removeTimer(id)
-	timers[id] = nil
-end
 
 function log(...)
 	local text = {...}
@@ -290,83 +260,21 @@ function log(...)
 end
 
 function loadModule(name)
-	local func, err = loadfile(("modules/%s.lua"):format(name))
+	require(("modules/%s"):format(name))
+	--[[local func, err = loadfile(("modules/%s.lua"):format(name))
 	if not func then
 		error("Could not load handlers.lua: " .. err, 0)
 	end
-	func()
+	func()]]
 end
 
-local sql = require("lsqlite3")
-database = sql.open("databases/db.sqlite3")
-function sqlAssert(...)
-	local v = {...}
-	if v[1] then
-		return unpack(v)
-	else
-		error(database:errmsg(), 2)
-	end
-end;
-
 loadModule("http")
-loadModule("event")
 loadModule("commands")
 
 if ircEnabled then
-	loadChannels()
-	
-	local function ircThread()
-		s:connect({
-			host = maincfg.IrcServer;
-			port = 6667;
-			password = Password;
-			secure = false;
-		})
-		
-		s.track_users = true
-		log("connected to irc")
-		
-		for _, channel in ipairs(channels) do
-			s:join(channel)
-			log("joining " .. channel)
-		end
-		
-		while running do
-			local succ, err = pcall(s.think, s)
-			if not succ then
-				print("IRC error: " .. err)
-				return
-			end
-				
-		end
-	end
-	
-	copas.addthread(ircThread)
-	
-	local function osuThread()
-		osuirc:connect({
-			host = maincfg.OsuIrcServer;
-			port = 6667;
-			password = maincfg.OsuPassword;
-			secure = false;
-		})
-		
-		log("connected to osu irc")
-		
-		while running do
-			local succ, err = pcall(osuirc.think, osuirc)
-			if not succ then
-				print("Osu IRC error: " .. err)
-				return
-			end
-		end
-	end
-	
-	copas.addthread(osuThread)
-end
-
-function printTable(tbL)
-	print(serialize(tbl))
+	loadModule("irc")
+	loadModule("osu")
+	loadModule("event")
 end
 
 running = true

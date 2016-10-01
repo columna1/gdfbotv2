@@ -1,8 +1,9 @@
 local json = require("dkjson")
+local http = require("lib/http")
 
 local baseUrl = "https://api.twitch.tv/kraken/"
 
-local twitchapi  {}
+local twitchapi = {}
 
 function twitchapi.get(api, args)
   local url = baseUrl .. api
@@ -10,7 +11,7 @@ function twitchapi.get(api, args)
     url = url .. "?" .. args
   end
 
-  local data = httpsGet(url, nil, {"Accept: application/vnd.twitchtv.v3+json"})
+  local data = http.get(url, nil, {"Accept: application/vnd.twitchtv.v3+json"})
   if data then
     local jsondata = json.decode(data)
     return jsondata

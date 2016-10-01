@@ -1,12 +1,13 @@
 local url = require("socket.url")
 local copas = require("copas")
+local twitch = require("lib/twitchapi")
 
 local function getActiveChannels()
-  local active = {}
-  for row in database:nrows("SELECT * FROM accounts WHERE active") do
-    table.insert(active, row.username)
-  end
-  return active
+	local active = {}
+	for row in database:nrows("SELECT * FROM accounts WHERE active") do
+		table.insert(active, row.username)
+	end
+	return active
 end
 
 local lastStats = {
@@ -26,7 +27,7 @@ local function pullStatistics()
 
   lastStats.stream = {}
 
-  local data = twitchGet("streams", "limit=100&channel=" .. table.concat(escapedChannels, ",")) -- max 100 channels
+  local data = twitch.get("streams", "limit=100&channel=" .. table.concat(escapedChannels, ",")) -- max 100 channels
   if data and data.streams then
     for _, stream in pairs(data.streams) do
       lastStats.channel[stream.channel.name] = stream.channel
@@ -37,7 +38,7 @@ local function pullStatistics()
 
   for _, channel in ipairs(channels) do
     if channels[channel] then
-      local data = twitchGet("channels/" .. url.escape(channel))
+      local data = twitch.get("channels/" .. url.escape(channel))
       if data and data.name then
         lastStats.channel[channel] = data
       end
@@ -45,9 +46,9 @@ local function pullStatistics()
   end
 end
 
-local stats = {}
+module("statistics")
 
-function stats.getLast()
+function getLast()
   return lastStats
 end
 
@@ -57,5 +58,3 @@ copas.addthread(function()
     copas.sleep(120)
   end
 end)
-
-return stats

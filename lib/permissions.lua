@@ -2,13 +2,17 @@ local json = require("dkjson")
 local sql = require("lsqlite3")
 
 local permissionsfile = "databases/permissions.sqlite3"
-
 local permdb = sql.open(permissionsfile)
+permdb:exec([[
+	CREATE TABLE IF NOT EXISTS user_permissions(user TEXT, channel TEXT, permission TEXT);
+	CREATE TABLE IF NOT EXISTS group_permissions('group' TEXT, channel TEXT, permission TEXT);
+	CREATE TABLE IF NOT EXISTS user_groups(user TEXT, channel TEXT, 'group' TEXT);
+	CREATE TABLE IF NOT EXISTS group_inherits('group' TEXT, channel TEXT, inherit TEXT);
+]])
 
-local permissions = {}
+module("permissions")
 
-	
-function permissions.removeGroup(group, channel)
+function removeGroup(group, channel)
 	group = group:lower()
 
 	local prep = sqlAssert(permdb:prepare("DELETE FROM group_permissions WHERE \"group\"=:group AND channel=:channel"))
@@ -30,7 +34,7 @@ function permissions.removeGroup(group, channel)
 	prep:finalize()
 end
 
-function permissions.removeUser(user, channel)
+function removeUser(user, channel)
 	user = user:lower()
 
 	local prep = sqlAssert(permdb:prepare("DELETE FROM user_permissions WHERE user=:user AND channel=:channel"))
@@ -46,7 +50,7 @@ function permissions.removeUser(user, channel)
 	prep:finalize()
 end
 
-function permissions.addUserPermission(user, permission, channel)
+function addUserPermission(user, permission, channel)
 	user = user:lower()
 
 	-- removeUserPermission(user, permission, channel)
@@ -59,7 +63,7 @@ function permissions.addUserPermission(user, permission, channel)
 	prep:finalize()
 end
 
-function permissions.removeUserPermission(user, permission, channel)
+function removeUserPermission(user, permission, channel)
 	user = user:lower()
 
 	local prep = sqlAssert(permdb:prepare("DELETE FROM user_permissions WHERE user=:user AND channel=:channel AND permission=:permission"))
@@ -70,7 +74,7 @@ function permissions.removeUserPermission(user, permission, channel)
 	prep:finalize()
 end
 
-function permissions.addUserGroup(user, group, channel)
+function addUserGroup(user, group, channel)
 	user = user:lower()
 	group = group:lower()
 
@@ -82,7 +86,7 @@ function permissions.addUserGroup(user, group, channel)
 	prep:finalize()
 end
 
-function permissions.removeUserGroup(user, group, channel)
+function removeUserGroup(user, group, channel)
 	user = user:lower()
 	group = group:lower()
 
@@ -94,7 +98,7 @@ function permissions.removeUserGroup(user, group, channel)
 	prep:finalize()
 end
 
-function permissions.addGroupInherit(group, inherit, channel)
+function addGroupInherit(group, inherit, channel)
 	inherit = inherit:lower()
 	group = group:lower()
 
@@ -106,7 +110,7 @@ function permissions.addGroupInherit(group, inherit, channel)
 	prep:finalize()
 end
 
-function permissions.removeGroupInherit(group, inherit, channel)
+function removeGroupInherit(group, inherit, channel)
 	inherit = inherit:lower()
 	group = group:lower()
 
@@ -118,7 +122,7 @@ function permissions.removeGroupInherit(group, inherit, channel)
 	prep:finalize()
 end
 
-function permissions.addGroupPermission(group, permission, channel)
+function addGroupPermission(group, permission, channel)
 	group = group:lower()
 
 	-- removeUserPermission(user, permission, channel)
@@ -131,7 +135,7 @@ function permissions.addGroupPermission(group, permission, channel)
 	prep:finalize()
 end
 
-function permissions.removeUserPermission(group, permission, channel)
+function removeUserPermission(group, permission, channel)
 	group = group:lower()
 
 	local prep = sqlAssert(permdb:prepare("DELETE FROM group_permissions WHERE \"group\"=:group AND channel=:channel AND permission=:permission"))
@@ -142,7 +146,7 @@ function permissions.removeUserPermission(group, permission, channel)
 	prep:finalize()
 end
 
-function permissions.groupDoesInherit(group, inherit, channel)
+function groupDoesInherit(group, inherit, channel)
 	group = group:lower()
 	inherit = inherit:lower()
 
@@ -157,7 +161,7 @@ function permissions.groupDoesInherit(group, inherit, channel)
 	return s == sqlite3.ROW
 end
 
-function permissions.userIsInGroup(user, inherit, channel)
+function userIsInGroup(user, inherit, channel)
 	user = user:lower()
 	inherit = inherit:lower()
 
@@ -172,11 +176,11 @@ function permissions.userIsInGroup(user, inherit, channel)
 	return s == sqlite3.ROW
 end
 
-function permissions.userIsAdmin(user, channel)
+function userIsAdmin(user, channel)
 	return userIsInGroup(user, "admin", channel)
 end
 
-function permissions.userIsMod(user, channel)
+function userIsMod(user, channel)
 	return userIsInGroup(user, "mod", channel)
 end
 
@@ -210,7 +214,7 @@ local function getUserGroups(user, channel)
 	return groups
 end
 
-function permissions.groupHasPermission(group, permission, channel)
+function groupHasPermission(group, permission, channel)
 	group = group:lower()
 
 	local prep = sqlAssert(permdb:prepare("SELECT * FROM group_permissions WHERE \"group\"=:group AND (channel=:channel OR channel='.global') AND (permission=:permission OR permission='*')"))
@@ -233,7 +237,7 @@ function permissions.groupHasPermission(group, permission, channel)
 	return false
 end
 
-function permissions.userHasPermission(user, permission, channel)
+function userHasPermission(user, permission, channel)
 	if groupHasPermission(".all", permission, channel) then
 		return true
 	end
@@ -260,7 +264,7 @@ function permissions.userHasPermission(user, permission, channel)
 	return false
 end
 
-function permissions.getUserWebChannels(user)
+function getUserWebChannels(user)
 	local channels = {}
 
 	local prep = sqlAssert(permdb:prepare("SELECT channel FROM user_permissions WHERE user=:user AND (permission='web' OR permission='*')"))

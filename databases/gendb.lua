@@ -18,8 +18,8 @@ local suc = db:exec([[
 	DROP TABLE IF EXISTS 'session';
 	CREATE TABLE session(sessionid CHAR(32) PRIMARY KEY, username TEXT UNIQUE NOT NULL, lastaccess BIGINT NOT NULL);
 
-  DROP TABLE IF EXISTS 'psession';
-  CREATE TABLE psession(sessionid CHAR(32) PRIMARY KEY, username TEXT UNIQUE NOT NULL);
+	DROP TABLE IF EXISTS 'psession';
+	CREATE TABLE psession(sessionid CHAR(32) PRIMARY KEY, username TEXT UNIQUE NOT NULL);
 
 	DROP TABLE IF EXISTS 'accounts';
 	CREATE TABLE accounts(userid INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, email TEXT NOT NULL, active BOOLEAN DEFAULT 1, oauth TEXT);

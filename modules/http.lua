@@ -10,7 +10,7 @@ local copas = require("copas")
 copas.http = require("copas.http")
 local coxpcall = require("coxpcall")
 local http = require("lib/http")
-local statistics = require("lib/statistics")
+require("lib/statistics")
 local permissions = require("lib/permissions")
 
 local httpsocket = socket.bind("*", 8080)

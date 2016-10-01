@@ -25,7 +25,7 @@ function event.call(channel, event, ...)
 		for _, func in ipairs(events[channel][event]) do
 			local succ, err = coxpcall.pcall(func, ...)
 			if not succ then
-				s:sendChat(channel, "Error running event " .. event .. ": " .. err)
+				sendIrcChat(channel, "Error running event " .. event .. ": " .. err)
 			end
 		end
 	end
@@ -40,7 +40,7 @@ event.add("#altenius", "chat", function(user, message)
 		if data then
 			local jdata = json.decode(data)
 			if jdata then
-				osuirc:sendChat("columna1", status[tonumber(jdata[1].approved)].." [" .. message:sub(sstart) .." " .. jdata[1].artist .. " - " .. jdata[1].title .. "] " .. string.format("%.2f", tonumber(jdata[1].difficultyrating)) .. " stars " .. jdata[1].hit_length .. " seconds long") -- todo: format seconds into minutes if long enough
+				sendOsuChat("columna1", status[tonumber(jdata[1].approved)].." [" .. message:sub(sstart) .." " .. jdata[1].artist .. " - " .. jdata[1].title .. "] " .. string.format("%.2f", tonumber(jdata[1].difficultyrating)) .. " stars " .. jdata[1].hit_length .. " seconds long") -- todo: format seconds into minutes if long enough
 			else
 				log("error: could not parse json")
 			end
@@ -62,21 +62,21 @@ local function chats(user, channel, message)
 
 	event.call(channel, "chat", user, message)
 end
-s:hook("OnChat",chats)
+ircsocket:hook("OnChat",chats)
 
 function raw(line)
 	 print(line)
 end
--- s:hook("OnRaw",raw)
+-- ircsocket:hook("OnRaw",raw)
 
 function lists(tab,msg)
 	--for users
-	--[[printTable(s.channels[IrcChannel].users)
-	for i,k in pairs(s.channels[IrcChannel].users) do
+	--[[printTable(ircsocket.channels[IrcChannel].users)
+	for i,k in pairs(ircsocket.channels[IrcChannel].users) do
 		if k.access.op then print(i.." is op")
 		elseif k.access.halfop then print(i.." is halfop")
 		elseif k.access.voice then print(i.." has voice?")
 		else print(i) end
 	end]]
 end
-s:hook("NameList",lists)
+ircsocket:hook("NameList",lists)
