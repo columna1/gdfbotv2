@@ -210,6 +210,8 @@ _G.maincfg = { ["IrcNick"] = "GdfBot";
 	["OsuIrcServer"] = "irc.ppy.sh";
 	["OsuPassword"] = "osupassword";
 	["Oauth"] = "oauth";
+	["TwitchClientId"] = "abcdefg";
+	["TwitchClientSecret"] = "gfedcba";
 }
 
 do

@@ -125,6 +125,7 @@ local function handleLuaFile(client, data, filename, args)
 	local mime = "text/html"
 
 	local luaenv = {
+		maincfg = maincfg;
 		cookies = client.cookies;
 		method = client.method;
 		args = args;
